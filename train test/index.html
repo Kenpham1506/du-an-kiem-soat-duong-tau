@@ -31,25 +31,13 @@
 			fill: yellow;
 			r: 6;
 		}
-		
-
-		#train {
-			offset-path: path("M300,100 S 400,100 450,150 S 450,300 500,300 S 450,450 300,500 S 200,450 100,450 S 100,300 100,300 S 200,200 300,100 Z");
-			offset-rotate: auto;
-			animation: moveTrain 30s linear infinite;
-		}
-
-		@keyframes moveTrain {
-			from { offset-distance: 0%; }
-			to { offset-distance: 100%; }
-		}
 	</style>
 </head>
 <body>
 	<svg viewBox="0 0 600 600">
 		<!-- Track path -->
-		<path d="M300,100 S 400,100 450,150 S 450,300 500,300 S 450,450 300,500 S 200,450 100,450 S 100,300 100,300 S 200,200 300,100 Z" 
-		      stroke="#444" fill="none" stroke-width="5" id="track" />
+		<path id="track" d="M300,100 S 400,100 450,150 S 450,300 500,300 S 450,450 300,500 S 200,450 100,450 S 100,300 100,300 S 200,200 300,100 Z" 
+		      stroke="#444" fill="none" stroke-width="5" />
 
 		<!-- Train -->
 		<circle class="train" id="train"></circle>
@@ -62,5 +50,42 @@
 		<circle class="station" cx="100" cy="450"/>
 		<circle class="check" cx="100" cy="300"/>
 	</svg>
+
+	<script>
+		const duration = 30000; // 30 seconds
+		const path = document.getElementById('track');
+		const train = document.getElementById('train');
+		const svgPath = path.getAttribute('d');
+		const pathLength = path.getTotalLength();
+
+		// Sync to a fixed time anchor (epoch)
+		function getProgress() {
+			const now = Date.now();
+			const elapsed = now % duration; // loop every 30s
+			return elapsed / duration;
+		}
+
+		function updateTrainPosition() {
+			const progress = getProgress();
+			const distance = pathLength * progress;
+			const pos = path.getPointAtLength(distance);
+			const next = path.getPointAtLength((distance + 1) % pathLength);
+
+			// Update train position
+			train.setAttribute('cx', pos.x);
+			train.setAttribute('cy', pos.y);
+
+			// Optional: rotate to face movement direction
+			const angle = Math.atan2(next.y - pos.y, next.x - pos.x) * 180 / Math.PI;
+			train.setAttribute('transform', `rotate(${angle} ${pos.x} ${pos.y})`);
+		}
+
+		function animate() {
+			updateTrainPosition();
+			requestAnimationFrame(animate);
+		}
+
+		animate();
+	</script>
 </body>
 </html>
