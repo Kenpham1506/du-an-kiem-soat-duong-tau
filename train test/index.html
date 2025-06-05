@@ -27,8 +27,14 @@
 			r: 6;
 		}
 
+		.check {
+			fill: yellow;
+			r: 6;
+		}
+		
+
 		#train {
-			offset-path: path("M300,100 C450,100 500,300 300,500 C100,500 100,300 300,100");
+			offset-path: path("M300,100 S 400,100 450,150 S 450,300 500,300 S 450,450 300,500 S 200,450 100,450 S 100,300 100,300 S 200,200 300,100 Z");
 			offset-rotate: auto;
 			animation: moveTrain 30s linear infinite;
 		}
